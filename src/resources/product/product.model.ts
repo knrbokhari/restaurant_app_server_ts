@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import Product from './user.interface';
+import Product from './product.interface';
 
 const ProductSchema = new Schema(
     {
