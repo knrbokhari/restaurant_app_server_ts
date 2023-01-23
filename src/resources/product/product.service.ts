@@ -17,9 +17,7 @@ class ProductService {
         }
     }
     // get all product
-    public async getAllProduct(
-        id: string
-    ): Promise<any | Error> {
+    public async getAllProduct(): Promise<any | Error> {
         try {
             let products = await this.product.find();
 
@@ -34,7 +32,17 @@ class ProductService {
     // update a product
 
     // delete a product
+    public async deleteProduct(
+        id: string
+    ): Promise<any | Error> {
+        try {
+            let product = await this.product.findByIdAndDelete(id);
 
+            return product;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
 }
 
 export default ProductService;
