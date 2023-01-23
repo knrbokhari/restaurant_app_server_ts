@@ -3,38 +3,40 @@ import Product from './user.interface';
 
 const ProductSchema = new Schema(
     {
-        first_name: {
+        name: {
             type: String,
             required: true,
         },
-        last_name: {
+        price: {
             type: String,
             required: true,
         },
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            trim: true,
-        },
-        phone:{
-            type: String,
-        },
-        password: {
+        discription: {
             type: String,
             required: true,
         },
-        role: {
+        stock_out:{
+            type: Boolean,
+            required: true,
+        },
+        time: {
+            type: String,
+            required: true,
+            default: '30'
+        },
+        discount: {
+            type: Number,
+            required: true,
+            default: 0
+        },
+        size: {
             type: String,
             required: true,
         },
-        address: {
-            type: String,
-        },
-        orders: [{
-            type: Schema.Types.ObjectId,
-            ref: "Order",
-        }]
+        image: {
+            type: Array,
+            default: []
+        }
     },
     { timestamps: true }
 );
