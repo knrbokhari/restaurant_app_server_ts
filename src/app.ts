@@ -4,6 +4,7 @@ import compression from 'compression';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit'
 
 import Controller from './interfaces/controller.interface';
 import errorMiddleware from './middleware/error.middleware';
@@ -29,6 +30,13 @@ class App {
       this.express.use(express.json());
       this.express.use(express.urlencoded({ extended: false }));
       this.express.use(compression());
+      this.express.use(
+        rateLimit({
+          windowMs: 24 * 60 * 3, // next request to endpoint
+          max: 100, // maximal request for all endpoint
+          message: 'To many request, send back request after 3 minutes'
+        })
+      );
   }
 
   private initialiseControllers(controllers: Controller[]): void {
@@ -43,8 +51,13 @@ class App {
 
   private initialiseDatabaseConnection(): void {
       const { MONGO_DB } = process.env;
-      mongoose.set('strictQuery', true);
-      mongoose.connect(`${MONGO_DB}`);
+      try {
+        mongoose.set('strictQuery', true);
+        mongoose.connect(`${MONGO_DB}`);
+        console.log("connected to mongodb");
+      } catch (error) {
+        console.log(error);
+      }
   }
 
   public listen(): void {
