@@ -27,7 +27,7 @@ class UserController implements Controller {
             validationMiddleware(validate.login),
             this.login
         );
-        this.router.get(`${this.path}`, authenticatedMiddleware, this.getUser);
+        this.router.get(`${this.path}`, authenticatedMiddleware, this.getAllUser);
     }
 
     private register = async (
@@ -69,16 +69,18 @@ class UserController implements Controller {
         }
     };
 
-    private getUser = (
+    private getAllUser = async (
         req: Request,
         res: Response,
         next: NextFunction
-    ): Response | void => {
-        if (!req.user) {
-            return next(new HttpException(404, 'No logged in user'));
-        }
+    ): Promise<Response | void> => {
+        try {
+            const users = await this.UserService.getAllUsers();
 
-        res.status(200).send({ data: req.user });
+            res.status(200).json(users);
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
     };
 }
 

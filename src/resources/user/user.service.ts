@@ -59,6 +59,17 @@ class UserService {
             throw new Error('Unable to Login');
         }
     }
+
+    // find all user
+    public async getAllUsers(): Promise<any | Error> {
+        try {
+            const users = await this.user.find();
+
+            return users;
+        } catch (err) {
+            throw new Error('Unable to Login');
+        }
+    }
 }
 
 export default UserService;
