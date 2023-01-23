@@ -17,6 +17,17 @@ class ProductService {
         }
     }
     // get all product
+    public async getAllProduct(
+        id: string
+    ): Promise<any | Error> {
+        try {
+            let products = await this.product.find();
+
+            return products;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
 
     // create a product
 
