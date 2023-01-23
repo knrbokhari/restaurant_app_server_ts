@@ -28,6 +28,34 @@ class ProductService {
     }
 
     // create a product
+    public async createProduct(
+        name: string,
+        price: string,
+        discription: string,
+        stock_out: boolean,
+        discount: number,
+        time: string,
+        size: string,
+        image: Array<string>
+    ): Promise<any | Error> {
+        try {
+            let product = await this.product.create({
+                name,
+                price,
+                discription,
+                stock_out,
+                discount,
+                time,
+                size,
+                image
+                });
+
+            return product;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
 
     // update a product
 
