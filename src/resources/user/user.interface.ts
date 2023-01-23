@@ -6,9 +6,9 @@ export default interface User extends Document {
   last_name: string;
   password: string;
   role: string;
-  phone: string;
-  address: string;
-  order: Array<[]>;
+  phone?: string;
+  address?: string;
+  orders?: Array<string>;
 
   isValidPassword(password: string): Promise<Error | boolean>;
 }

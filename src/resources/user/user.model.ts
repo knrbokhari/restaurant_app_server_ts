@@ -20,7 +20,6 @@ const UserSchema = new Schema(
         },
         phone:{
             type: String,
-            required: true,
         },
         password: {
             type: String,
@@ -33,7 +32,7 @@ const UserSchema = new Schema(
         address: {
             type: String,
         },
-        order: [{
+        orders: [{
             type: Schema.Types.ObjectId,
             ref: "Order",
         }]
