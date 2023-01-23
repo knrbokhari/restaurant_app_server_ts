@@ -35,10 +35,11 @@ class UserController implements Controller {
         res: Response,
         next: NextFunction
     ): Promise<Response | void> => {
-        try {
-            const { first_name, last_name, email, password, role } = req.body;
+        const { first_name, last_name, email, password, role } = req.body;
 
-            const token = await this.UserService.register(
+        try {
+
+            const userWithToken: any = await this.UserService.register(
                 first_name,
                 last_name,
                 email,
@@ -46,7 +47,7 @@ class UserController implements Controller {
                 role
             );
 
-            res.status(201).json({ token });
+            res.status(201).json({ ...userWithToken });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
@@ -60,9 +61,9 @@ class UserController implements Controller {
         try {
             const { email, password } = req.body;
 
-            const token = await this.UserService.login(email, password);
+            const userWithToken = await this.UserService.login(email, password);
 
-            res.status(200).json({ token });
+            res.status(200).json({ ...userWithToken });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }

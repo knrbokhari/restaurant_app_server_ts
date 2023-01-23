@@ -11,9 +11,9 @@ class UserService {
         email: string,
         password: string,
         role: string
-    ): Promise<string | Error> {
+    ): Promise<any | Error> {
         try {
-            const user = await this.user.create({
+            let user: any = await this.user.create({
                 first_name,
                 last_name,
                 email,
@@ -21,9 +21,12 @@ class UserService {
                 role,
             });
 
+            const userObject = user.toObject();
+            delete userObject.password;
+
             const accessToken = token.createToken(user);
 
-            return accessToken;
+            return { user: userObject, token: accessToken};
         } catch (err: any) {
             throw new Error(err.message);
         }
@@ -33,7 +36,7 @@ class UserService {
     public async login(
         email: string,
         password: string
-    ): Promise<string | Error> {
+    ): Promise<any | Error> {
         try {
             const user = await this.user.findOne({ email });
 
@@ -42,7 +45,13 @@ class UserService {
             }
 
             if (await user.isValidPassword(password)) {
-                return token.createToken(user);
+                // remove password from user Object
+                const userObject = user.toObject();
+                delete userObject.password;
+
+                const accessToken = token.createToken(user);
+
+                return { user: userObject, token: accessToken};
             } else {
                 throw new Error('Wrong credentials given');
             }
