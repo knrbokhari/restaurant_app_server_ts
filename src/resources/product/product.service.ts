@@ -58,6 +58,35 @@ class ProductService {
 
 
     // update a product
+    public async updateProduct(
+        id: string,
+        name: string,
+        price: string,
+        discription: string,
+        stock_out: boolean,
+        discount: number,
+        time: string,
+        size: string,
+        image: Array<string>
+    ): Promise<any | Error> {
+        try {
+            let product = await this.product.findByIdAndUpdate(id, {
+                name,
+                price,
+                discription,
+                stock_out,
+                discount,
+                time,
+                size, 
+                image 
+            }, 
+            {new: true});
+
+            return product;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
 
     // delete a product
     public async deleteProduct(
