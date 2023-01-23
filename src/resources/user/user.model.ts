@@ -33,7 +33,7 @@ const UserSchema = new Schema(
         address: {
             type: String,
         },
-        order: [{
+        orders: [{
             type: Schema.Types.ObjectId,
             ref: "Order",
         }]

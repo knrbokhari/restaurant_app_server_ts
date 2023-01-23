@@ -8,7 +8,7 @@ export default interface User extends Document {
   role: string;
   phone: string;
   address: string;
-  order: Array<[]>;
+  orders: Array<string>;
 
   isValidPassword(password: string): Promise<Error | boolean>;
 }
