@@ -1,10 +1,13 @@
-import app from './app';
-import connectDB from './connectDB';
+import 'dotenv/config';
+import 'module-alias/register';
+import App from './app';
+import validateEnv from './utils/validateEnv';
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  connectDB()
-  /* eslint-disable no-console */
-  console.log(`Listening: http://localhost:${port}`);
-  /* eslint-enable no-console */
-});
+validateEnv();
+
+const app = new App(
+    [],
+    Number(process.env.PORT)
+);
+
+app.listen();
