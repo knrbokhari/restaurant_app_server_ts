@@ -28,6 +28,11 @@ const OrderSchema = new Schema({
         address: {
             type: String,
             required: true,
+        },
+        status:{
+            type: String, 
+            enum: ['created', 'processing', 'cancelled', 'completed'], 
+            default: 'created' 
         }
     },
     { timestamps: true }

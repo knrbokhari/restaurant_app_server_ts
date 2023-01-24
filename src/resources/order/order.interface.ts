@@ -7,4 +7,5 @@ export default interface Order extends Document {
     totalPrice: number;
     number: string;
     address: string;
+    status: string;
 }
