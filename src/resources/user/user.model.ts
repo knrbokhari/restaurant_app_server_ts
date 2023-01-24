@@ -27,6 +27,8 @@ const UserSchema = new Schema(
         },
         role: {
             type: String,
+            enum: ['user', 'Chef', 'delivery_Boy', 'Admin'],
+            default: 'user',
             required: true,
         },
         address: {
@@ -34,7 +36,7 @@ const UserSchema = new Schema(
         },
         orders: [{
             type: Schema.Types.ObjectId,
-            ref: "Order",
+            ref: "Orders",
         }]
     },
     { timestamps: true }
