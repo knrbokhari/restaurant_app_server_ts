@@ -59,6 +59,23 @@ class ProductController implements Controller {
         }
     };
 
+    // create a Product
+    private createProduct = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { name, price, discription, stock_out, discount, time, size, image } = req.body;
+
+            const product = await this.ProductService.createProduct( name, price, discription, stock_out, discount, time, size, image );
+
+            res.status(201).json(product);
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
     
 }
 
