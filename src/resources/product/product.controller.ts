@@ -115,6 +115,29 @@ class ProductController implements Controller {
         }
     };
 
+    //  DELETE product
+    private deleteProduct = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+            const product = await this.ProductService.getProduct(id);
+
+            if(!product.length) return next(new HttpException(404, 'Product not found.'));
+
+            const deleteProduct = await this.ProductService.deleteProduct(id);
+
+            res.status(200).json({
+                success: true,
+                message: 'Product deleted successfully',
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
     
 }
 
