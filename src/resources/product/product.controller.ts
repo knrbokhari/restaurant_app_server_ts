@@ -17,17 +17,18 @@ class ProductController implements Controller {
     }
 
     private initialiseRoutes(): void {
-        this.router.post(
+        this.router.get(
             `${this.path}/:id`,
             this.findAProduct
         );
-        // this.router.post(
-        //     `${this.path}/`,
-        //     this.findAllProduct
-        // );
+        this.router.get(
+            `${this.path}/`,
+            this.findAllProduct
+        );
         // this.router.get(`${this.path}`, authenticatedMiddleware, this.);
     }
 
+    // find A Product
     private findAProduct = async (
         req: Request,
         res: Response,
@@ -38,6 +39,21 @@ class ProductController implements Controller {
             const product = await this.ProductService.getProduct(id);
 
             res.status(200).json(product);
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // find All Product
+    private findAllProduct = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const products = await this.ProductService.getAllProduct();
+
+            res.status(200).json(products);
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
