@@ -25,7 +25,16 @@ class ProductController implements Controller {
             `${this.path}/`,
             this.findAllProduct
         );
-        // this.router.get(`${this.path}`, authenticatedMiddleware, this.);
+        this.router.post(`${this.path}/create`, 
+        authenticatedMiddleware, 
+        validationMiddleware(validate.createProduct), 
+        this.newProduct
+        );
+        this.router.put(`${this.path}/:id`, 
+        authenticatedMiddleware, 
+        validationMiddleware(validate.updateProduct), 
+        this.updateAProduct
+        );
     }
 
     // find A Product
@@ -37,6 +46,8 @@ class ProductController implements Controller {
         try {
             const { id } = req.params;
             const product = await this.ProductService.getProduct(id);
+
+            if(!product.length) return next(new HttpException(404, 'Product not found.'))
 
             res.status(200).json(product);
         } catch (error: any) {
@@ -53,6 +64,8 @@ class ProductController implements Controller {
         try {
             const products = await this.ProductService.getAllProduct();
 
+            if (!products.length) return res.status(200).json({ success: true, msg: "No product created yet" });
+
             res.status(200).json(products);
         } catch (error: any) {
             next(new HttpException(400, error.message));
@@ -60,7 +73,7 @@ class ProductController implements Controller {
     };
 
     // create a Product
-    private createProduct = async (
+    private newProduct = async (
         req: Request,
         res: Response,
         next: NextFunction
@@ -68,9 +81,35 @@ class ProductController implements Controller {
         try {
             const { name, price, discription, stock_out, discount, time, size, image } = req.body;
 
-            const product = await this.ProductService.createProduct( name, price, discription, stock_out, discount, time, size, image );
+            const newProduct = await this.ProductService.createProduct( name, price, discription, stock_out, discount, time, size, image );
 
-            res.status(201).json(product);
+            res.status(201).json({
+                success: true,
+                newProduct,
+                msg: "New product added successfully",
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // update A Product
+    private updateAProduct = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+            const { name, price, discription, stock_out, discount, time, size, image } = req.body;
+
+            const updatedProduct = await this.ProductService.updateProduct( id, name, price, discription, stock_out, discount, time, size, image );
+
+            res.status(200).json({
+                success: true,
+                updatedProduct,
+                msg: "Product update successfully",
+              });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
