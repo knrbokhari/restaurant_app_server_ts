@@ -5,7 +5,7 @@ import Order from './order.interface';
 const OrderSchema = new Schema({
         clientId: {
             type: Schema.Types.ObjectId,
-            ref: "Products",
+            ref: "User",
             required: true,
         },
         clientName: {
