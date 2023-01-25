@@ -26,17 +26,14 @@ class OrderController implements Controller{
         );
         this.router.put(`${this.path}/:id`, 
         authenticatedMiddleware, 
-        // validationMiddleware(validate), 
-        // this.processingOrder
+        this.processingOrder
         );
         this.router.put(`${this.path}/:id`, 
         authenticatedMiddleware, 
-        // validationMiddleware(validate), 
         // this.cancelledOrder
         );
         this.router.put(`${this.path}/:id`, 
         authenticatedMiddleware, 
-        // validationMiddleware(validate), 
         // this.completedOrder
         );
     }
@@ -73,7 +70,33 @@ class OrderController implements Controller{
 
             res.status(200).json({
                 success: true,
-                newOrder: Orders,
+                Orders,
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+
+    // processing a Order
+    private processingOrder = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const {id} = req.params;
+
+            const order = await this.OrderService.findAOrder(id);
+
+            if(!order) return res.status(404).json({ success: false, msg: "Order not found." });
+
+            const processingOrder = await this.OrderService.processingOrder(id);
+
+            res.status(200).json({
+                success: true,
+                processingOrder,
+                msg: "Order processing successfully"
               });
         } catch (error: any) {
             next(new HttpException(400, error.message));
