@@ -20,6 +20,10 @@ class OrderController implements Controller{
         // validationMiddleware(validate), 
         this.newOrder
         );
+        this.router.get(`${this.path}/`, 
+        authenticatedMiddleware, 
+        this.findAllOrder
+        );
         this.router.put(`${this.path}/:id`, 
         authenticatedMiddleware, 
         // validationMiddleware(validate), 
@@ -52,6 +56,24 @@ class OrderController implements Controller{
                 success: true,
                 newOrder,
                 msg: "New Order added successfully",
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // find all Orders
+    private findAllOrder = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const Orders = await this.OrderService.findAllOrder();
+
+            res.status(200).json({
+                success: true,
+                newOrder: Orders,
               });
         } catch (error: any) {
             next(new HttpException(400, error.message));
