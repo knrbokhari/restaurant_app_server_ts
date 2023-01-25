@@ -30,7 +30,7 @@ class OrderController implements Controller{
         );
         this.router.put(`${this.path}/:id`, 
         authenticatedMiddleware, 
-        // this.cancelledOrder
+        this.cancelledOrder
         );
         this.router.put(`${this.path}/:id`, 
         authenticatedMiddleware, 
@@ -97,6 +97,30 @@ class OrderController implements Controller{
                 success: true,
                 processingOrder,
                 msg: "Order processing successfully"
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // processing a Order
+    private cancelledOrder = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const {id} = req.params;
+
+            const order = await this.OrderService.findAOrder(id);
+
+            if(!order) return res.status(404).json({ success: false, msg: "Order not found." });
+
+            const cancelledOrder = await this.OrderService.cancelledOrder(id);
+
+            res.status(200).json({
+                success: true,
+                msg: "Order successfully cancelled"
               });
         } catch (error: any) {
             next(new HttpException(400, error.message));
