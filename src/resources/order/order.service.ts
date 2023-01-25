@@ -6,6 +6,30 @@ class OrderService {
     private orderItemsService = new orderItemsService;
     private order = orderModel;
 
+    // find All order 
+    public async findAllOrder(): Promise<any | Error> {
+        try {
+            const orders = await this.order.find();
+
+            return orders;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    // find All order 
+    public async findAOrder(
+        id: string
+    ): Promise<any | Error> {
+        try {
+            const order = await this.order.findById(id);
+
+            return order;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
     // create a order
     public async createOrder(
         clientId: string,
