@@ -9,9 +9,11 @@ class OrderItemsService {
         data: Array<OrderItems>
     ): Promise<any | Error> {
         try {
-            let orderItems = await this.orderItems.insertMany(data)
+            let orderItems = await this.orderItems.insertMany(data);
 
-            return orderItems;
+            let orderItemsId = orderItems.map(i => i._id);
+
+            return orderItemsId;
         } catch (err: any) {
             throw new Error(err.message);
         }
