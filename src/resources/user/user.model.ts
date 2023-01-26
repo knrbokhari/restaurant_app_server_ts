@@ -71,6 +71,14 @@ UserSchema.pre<User>('save', async function (next) {
     next();
 });
 
+// removeing password from user object
+UserSchema.methods.toJSON = function () {
+    const user = this;
+    const userObject = user.toObject();
+    delete userObject.password;
+    return userObject;
+  };
+
 UserSchema.methods.isValidPassword = async function (
     password: string
 ): Promise<Error | boolean> {
