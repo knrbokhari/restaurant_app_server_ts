@@ -152,7 +152,7 @@ class UserService {
                 throw new Error('Old password does not match');
             }
         } catch (err) {
-            throw new Error('Unable to Login');
+            throw new Error('Give correct password');
         }
     }
 
@@ -188,7 +188,7 @@ class UserService {
                   message,
                 });
                 
-                return user.email;
+                return user;
             });
 
         } catch (err) {

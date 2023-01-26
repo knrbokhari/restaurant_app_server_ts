@@ -45,7 +45,7 @@ class UserController implements Controller {
         );
         this.router.post(`${this.path}/forgot`, 
         authenticatedMiddleware, 
-        this.updateUser
+        this.forgotPassword
         );
         this.router.post(`${this.path}/reset/:token`, 
         authenticatedMiddleware, 
@@ -158,6 +158,25 @@ class UserController implements Controller {
             await this.UserService.changePassword( email, oldPassword, newPassword );
 
             res.status(200).json({ success: true, msg: 'Password changed successfully' });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // forget password
+    private forgotPassword = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { email } = req.body;
+            const protocol = req.protocol;
+            const host: any = req.headers.host;
+
+            const user = await this.UserService.forgotPassword( email, protocol, host );
+
+            res.status(200).json({ success: true, msg: `Please check your email ${user.email} to complete the process` });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
