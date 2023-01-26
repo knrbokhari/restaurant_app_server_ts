@@ -1,8 +1,11 @@
 import { Router, Request, Response, NextFunction } from "express";
 import Controller from "interfaces/controller.interface";
 import authenticatedMiddleware from "middleware/authenticated.middleware";
+import validationMiddleware from "middleware/validation.middleware";
 import HttpException from "utils/exceptions/http.exception";
 import OrderService from "./order.service";
+import validate from './order.validation';
+
 
 
 class OrderController implements Controller{
@@ -17,7 +20,7 @@ class OrderController implements Controller{
     private initialiseRoutes(): void {
         this.router.post(`${this.path}/create`, 
         authenticatedMiddleware, 
-        // validationMiddleware(validate), 
+        validationMiddleware(validate.createOrder), 
         this.newOrder
         );
         this.router.get(`${this.path}/`, 
