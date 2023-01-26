@@ -39,6 +39,18 @@ class UserController implements Controller {
         authenticatedMiddleware, 
         this.updateUser
         );
+        this.router.put(`${this.path}/change-password`, 
+        authenticatedMiddleware, 
+        this.changePassword
+        );
+        this.router.post(`${this.path}/forgot`, 
+        authenticatedMiddleware, 
+        this.updateUser
+        );
+        this.router.post(`${this.path}/reset/:token`, 
+        authenticatedMiddleware, 
+        this.updateUser
+        );
     }
 
     // creating new user
@@ -129,6 +141,23 @@ class UserController implements Controller {
             const user = await this.UserService.updateUser( id, req.body);
 
             res.status(200).json({ success: true, user, msg: 'User updated successfully' });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // change Password
+    private changePassword = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { email, oldPassword, newPassword } = req.body;
+
+            await this.UserService.changePassword( email, oldPassword, newPassword );
+
+            res.status(200).json({ success: true, msg: 'Password changed successfully' });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
