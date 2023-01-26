@@ -35,19 +35,22 @@ class UserController implements Controller {
         res: Response,
         next: NextFunction
     ): Promise<Response | void> => {
-        const { first_name, last_name, email, password, role } = req.body;
-
         try {
+            const { first_name, last_name, email, password, role } = req.body;
+            const protocol = req.protocol;
+            const host: any = req.headers.host;
 
-            const userWithToken: any = await this.UserService.register(
+            const user: any = await this.UserService.register(
                 first_name,
                 last_name,
                 email,
                 password,
-                role
+                role,
+                protocol,
+                host
             );
 
-            res.status(201).json({ ...userWithToken });
+            res.status(201).json({ success: true, data: `Please check your email ${user.email} to complete signup process in order to use the application` });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
