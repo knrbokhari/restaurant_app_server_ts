@@ -1,4 +1,4 @@
-import sendEmail from "utils/sendEmail";
+import sendEmail from "../../utils/sendEmail";
 import token, { verifyToken } from "../../utils/token";
 import userModel from "./user.model";
 import bcrypt from 'bcrypt';
@@ -92,6 +92,8 @@ class UserService {
 
                 const accessToken = token.createToken(user);
 
+                if(!user.verification) throw new Error('Please Verify your account');
+
                 return { user: userObject, token: accessToken};
             } else {
                 throw new Error('Wrong credentials given');
@@ -107,23 +109,24 @@ class UserService {
             const users = await this.user.find();
 
             return users;
-        } catch (err) {
-            throw new Error('Unable to Login');
+        } catch (err: any) {
+            throw new Error(err.message);
         }
     }
 
     // update user
-    public async updateUsers(
+    public async updateUser(
         id:string,
         data: any
     ): Promise<any | Error> {
         try {
-            const user: any = await this.user.findByIdAndUpdate(id, data, { new: true });
-            // remove password from user Object
-            const userObject = user.toObject();
-            delete userObject.password;
+            const user = await this.user.findById(id);
 
-            return user;
+            if(user) throw new Error('User not found');
+
+            const updatedUser: any = await this.user.findByIdAndUpdate(id, data, { new: true });
+
+            return updatedUser;
         } catch (err) {
             throw new Error('Unable to Login');
         }

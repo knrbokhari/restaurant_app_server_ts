@@ -27,9 +27,17 @@ class UserController implements Controller {
             validationMiddleware(validate.login),
             this.login
         );
-        this.router.get(`${this.path}`, authenticatedMiddleware, this.getAllUser);
+        this.router.get(`${this.path}`, 
+        authenticatedMiddleware, 
+        this.getAllUser
+        );
+        this.router.put(`${this.path}/update/:id`, 
+        authenticatedMiddleware, 
+        this.updateUser
+        );
     }
 
+    // creating new user
     private register = async (
         req: Request,
         res: Response,
@@ -56,6 +64,7 @@ class UserController implements Controller {
         }
     };
 
+    // login user
     private login = async (
         req: Request,
         res: Response,
@@ -72,6 +81,7 @@ class UserController implements Controller {
         }
     };
 
+    // get all users 
     private getAllUser = async (
         req: Request,
         res: Response,
@@ -81,6 +91,23 @@ class UserController implements Controller {
             const users = await this.UserService.getAllUsers();
 
             res.status(200).json(users);
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // update user 
+    private updateUser = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+
+            const user = await this.UserService.updateUser( id, req.body);
+
+            res.status(200).json({ success: true, user, msg: 'User updated successfully' });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
