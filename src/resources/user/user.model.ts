@@ -37,7 +37,24 @@ const UserSchema = new Schema(
         orders: [{
             type: Schema.Types.ObjectId,
             ref: "Orders",
-        }]
+        }],
+        cart: [{
+            cartId: {
+                type: Schema.Types.ObjectId,
+                ref: "Carts",
+              },
+              _id: false,
+        }],
+        resetPasswordToken: {
+            type: String
+        },
+        resetPasswordExpires: {
+            type: Date
+        },
+        verification: {
+            type: Boolean,
+            default: false
+        }
     },
     { timestamps: true }
 );
