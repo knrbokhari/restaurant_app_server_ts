@@ -31,6 +31,10 @@ class UserController implements Controller {
         authenticatedMiddleware, 
         this.getAllUser
         );
+        this.router.get(`${this.path}/verify/:registerToken`, 
+        authenticatedMiddleware, 
+        this.verifyUser
+        );
         this.router.put(`${this.path}/update/:id`, 
         authenticatedMiddleware, 
         this.updateUser
@@ -76,6 +80,23 @@ class UserController implements Controller {
             const userWithToken = await this.UserService.login(email, password);
 
             res.status(200).json({ ...userWithToken });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // Verify user using email
+    private verifyUser = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { registerToken } = req.params;
+
+            const vToken = await this.UserService.verifyUser(registerToken);
+
+            res.status(200).json({ success: true, msg: 'User verification successfully' });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }

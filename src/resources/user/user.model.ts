@@ -76,6 +76,9 @@ UserSchema.methods.toJSON = function () {
     const user = this;
     const userObject = user.toObject();
     delete userObject.password;
+    delete userObject.resetPasswordExpires;
+    delete userObject.resetPasswordToken;
+    delete userObject.verification;
     return userObject;
   };
 

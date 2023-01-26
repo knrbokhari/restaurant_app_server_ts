@@ -47,10 +47,10 @@ class UserService {
     // Verify user using email
     public async verifyUser(
         token: string,
-        email: string
+        // email: string
     ): Promise<any | Error> {
         try {
-            await verifyToken(token);
+            const vToken = await verifyToken(token);
 
             // const user = await this.user.findOne({email});
 
@@ -65,9 +65,9 @@ class UserService {
             // // } else {
             // //     throw new Error('Wrong credentials given');
             // // }
-            const user = await this.user.findOneAndUpdate({ email }, { verification: true }, { new: true });
+            // const user = await this.user.findOneAndUpdate({ email }, { verification: true }, { new: true });
 
-            return user?.email
+            return vToken
         } catch (err) {
             throw new Error('verify Token failed');
         }
