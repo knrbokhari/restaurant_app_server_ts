@@ -37,7 +37,24 @@ const UserSchema = new Schema(
         orders: [{
             type: Schema.Types.ObjectId,
             ref: "Orders",
-        }]
+        }],
+        cart: [{
+            cartId: {
+                type: Schema.Types.ObjectId,
+                ref: "Carts",
+              },
+              _id: false,
+        }],
+        resetPasswordToken: {
+            type: String
+        },
+        resetPasswordExpires: {
+            type: Date
+        },
+        verification: {
+            type: Boolean,
+            default: false
+        }
     },
     { timestamps: true }
 );
@@ -53,6 +70,17 @@ UserSchema.pre<User>('save', async function (next) {
 
     next();
 });
+
+// removeing password from user object
+UserSchema.methods.toJSON = function () {
+    const user = this;
+    const userObject = user.toObject();
+    delete userObject.password;
+    delete userObject.resetPasswordExpires;
+    delete userObject.resetPasswordToken;
+    delete userObject.verification;
+    return userObject;
+  };
 
 UserSchema.methods.isValidPassword = async function (
     password: string

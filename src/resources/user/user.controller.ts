@@ -27,32 +27,60 @@ class UserController implements Controller {
             validationMiddleware(validate.login),
             this.login
         );
-        this.router.get(`${this.path}`, authenticatedMiddleware, this.getAllUser);
+        this.router.get(`${this.path}`, 
+        authenticatedMiddleware, 
+        this.getAllUser
+        );
+        this.router.get(`${this.path}/verify/:registerToken`, 
+        authenticatedMiddleware, 
+        this.verifyUser
+        );
+        this.router.put(`${this.path}/update/:id`, 
+        authenticatedMiddleware, 
+        this.updateUser
+        );
+        this.router.put(`${this.path}/change-password`, 
+        authenticatedMiddleware, 
+        this.changePassword
+        );
+        this.router.post(`${this.path}/forgot`, 
+        authenticatedMiddleware, 
+        this.forgotPassword
+        );
+        this.router.post(`${this.path}/reset/:token`, 
+        authenticatedMiddleware, 
+        this.resetPassword
+        );
     }
 
+    // creating new user
     private register = async (
         req: Request,
         res: Response,
         next: NextFunction
     ): Promise<Response | void> => {
-        const { first_name, last_name, email, password, role } = req.body;
-
         try {
+            const { first_name, last_name, email, password, role } = req.body;
+            const protocol = req.protocol;
+            const host: any = req.headers.host;
 
-            const userWithToken: any = await this.UserService.register(
+            const user: any = await this.UserService.register(
                 first_name,
                 last_name,
                 email,
                 password,
-                role
+                role,
+                protocol,
+                host
             );
 
-            res.status(201).json({ ...userWithToken });
+            res.status(201).json({ success: true, data: `Please check your email ${user.email} to complete signup process in order to use the application` });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
     };
 
+    // login user
     private login = async (
         req: Request,
         res: Response,
@@ -69,6 +97,24 @@ class UserController implements Controller {
         }
     };
 
+    // Verify user using email
+    private verifyUser = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { registerToken } = req.params;
+
+            const vToken = await this.UserService.verifyUser(registerToken);
+
+            res.status(200).json({ success: true, msg: 'User verification successfully' });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // get all users 
     private getAllUser = async (
         req: Request,
         res: Response,
@@ -78,6 +124,77 @@ class UserController implements Controller {
             const users = await this.UserService.getAllUsers();
 
             res.status(200).json(users);
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // update user 
+    private updateUser = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+
+            const user = await this.UserService.updateUser( id, req.body);
+
+            res.status(200).json({ success: true, user, msg: 'User updated successfully' });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // change Password
+    private changePassword = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { email, oldPassword, newPassword } = req.body;
+
+            await this.UserService.changePassword( email, oldPassword, newPassword );
+
+            res.status(200).json({ success: true, msg: 'Password changed successfully' });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // forget password
+    private forgotPassword = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { email } = req.body;
+            const protocol = req.protocol;
+            const host: any = req.headers.host;
+
+            const user = await this.UserService.forgotPassword( email, protocol, host );
+
+            res.status(200).json({ success: true, msg: `Please check your email ${user.email} to complete the process` });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // reset password
+    private resetPassword = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { token } = req.params;
+            const { newPassword } = req.body;
+
+            await this.UserService.resetPassword( token, newPassword );
+
+            res.status(200).json({ success: true, msg: 'reset password successfully' });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
