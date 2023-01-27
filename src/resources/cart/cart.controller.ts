@@ -32,7 +32,7 @@ class OrderController implements Controller{
         );
         this.router.put(`${this.path}/decrease-cart/:id`, 
         authenticatedMiddleware, 
-        // this.decreaseCartProduct
+        this.decreaseCartProduct
         );
     }
 
@@ -135,5 +135,29 @@ class OrderController implements Controller{
     };
 
     // decrease Cart quantity
+    private decreaseCartProduct = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+
+            const preCart = await this.CartService.findCartById( id );
+
+            if ( !preCart ) throw new Error("Product not found");
+
+            await this.CartService.decreaseCartProductQuantity(id);
+
+            const user = await this.UserService.getAUser(preCart.clientId);
+
+            res.status(200).json({
+                success: true,
+                user,
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
 
 }
