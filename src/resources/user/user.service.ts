@@ -114,6 +114,17 @@ class UserService {
         }
     }
 
+    // find a user
+    public async getAUser( id: string): Promise<any | Error> {
+        try {
+            const user = await this.user.findById(id);
+
+            return user;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
     // update user
     public async updateUser(
         id:string,
