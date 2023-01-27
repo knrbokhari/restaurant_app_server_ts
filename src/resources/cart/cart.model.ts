@@ -22,10 +22,9 @@ const CartSchema = new Schema({
             required: true,
             default: 1
         },
-        status:{
-            type: String, 
-            enum: ['created', 'completed'], 
-            default: 'created' 
+        order:{
+            type: Boolean,
+            default: false 
         }
     },
     { timestamps: true }

@@ -5,5 +5,5 @@ export default interface Cart extends Document {
     productId: string;
     price: number;
     quantity: number;
-    status: string;
+    order: boolean;
 }

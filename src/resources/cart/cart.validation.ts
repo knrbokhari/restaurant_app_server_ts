@@ -5,7 +5,7 @@ const createCart = Joi.object({
     productId: Joi.string().max(30).required(),
     price: Joi.number().required(),
     quantity: Joi.number(),
-    status: Joi.string()
+    order: Joi.boolean()
 });
 
 export default { createCart };
