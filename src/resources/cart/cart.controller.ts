@@ -24,13 +24,13 @@ class OrderController implements Controller{
         );
         this.router.put(`${this.path}/remove-from-cart`, 
         authenticatedMiddleware, 
-        // this.removeFromCart
+        this.removeFromCart
         );
         this.router.put(`${this.path}/increase-cart`, 
         authenticatedMiddleware, 
         // this.increaseCartProduct
         );
-        this.router.put(`${this.path}/decrease-cart`, 
+        this.router.put(`${this.path}/decrease-cart/:id`, 
         authenticatedMiddleware, 
         // this.decreaseCartProduct
         );
@@ -76,6 +76,37 @@ class OrderController implements Controller{
     };
 
     // remove product from card
+    private removeFromCart = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+
+            const preCart = await this.CartService.findCartById( id );
+
+            if ( !preCart ) throw new Error("Product not found");
+            const user = await this.UserService.getAUser(preCart.clientId);
+
+            const userCart = user.cart;
+            const updateCart = userCart.filter((i: { _id: string; }) => i._id !== id);
+
+            user.cart = updateCart;
+            user.markModified("cart");
+            await user.save();
+
+            await this.CartService.removeProductFromCart(id);
+
+            res.status(200).json({
+                success: true,
+                user,
+                msg: "Prodact remove successfully",
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
 
     // increase Cart quantity
 
