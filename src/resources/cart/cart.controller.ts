@@ -17,18 +17,18 @@ class OrderController implements Controller{
     }
 
     private initialiseRoutes(): void {
-        this.router.post(`${this.path}//add-to-cart`, 
+        this.router.post(`${this.path}/add-to-cart`, 
         authenticatedMiddleware, 
         // validationMiddleware(validate.createOrder), 
         this.addToCart
         );
-        this.router.put(`${this.path}/remove-from-cart`, 
+        this.router.put(`${this.path}/remove-from-cart/:id`, 
         authenticatedMiddleware, 
         this.removeFromCart
         );
-        this.router.put(`${this.path}/increase-cart`, 
+        this.router.put(`${this.path}/increase-cart/:id`, 
         authenticatedMiddleware, 
-        // this.increaseCartProduct
+        this.increaseCartProduct
         );
         this.router.put(`${this.path}/decrease-cart/:id`, 
         authenticatedMiddleware, 
@@ -109,6 +109,30 @@ class OrderController implements Controller{
     };
 
     // increase Cart quantity
+    private increaseCartProduct = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+
+            const preCart = await this.CartService.findCartById( id );
+
+            if ( !preCart ) throw new Error("Product not found");
+
+            await this.CartService.increaseCartProductQuantity(id);
+
+            const user = await this.UserService.getAUser(preCart.clientId);
+
+            res.status(200).json({
+                success: true,
+                user,
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
 
     // decrease Cart quantity
 
