@@ -32,7 +32,7 @@ class UserController implements Controller {
         this.getAllUser
         );
         this.router.get(`${this.path}/verify/:registerToken`, 
-        authenticatedMiddleware, 
+        // authenticatedMiddleware, 
         this.verifyUser
         );
         this.router.put(`${this.path}/update/:id`, 
@@ -74,7 +74,7 @@ class UserController implements Controller {
                 host
             );
 
-            res.status(201).json({ success: true, data: `Please check your email ${user.email} to complete signup process in order to use the application` });
+            res.status(201).json({ success: true, data: `Please check your email ${email} to complete signup process in order to use the application` });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
@@ -106,7 +106,7 @@ class UserController implements Controller {
         try {
             const { registerToken } = req.params;
 
-            const vToken = await this.UserService.verifyUser(registerToken);
+            await this.UserService.verifyUser(registerToken);
 
             res.status(200).json({ success: true, msg: 'User verification successfully' });
         } catch (error: any) {
