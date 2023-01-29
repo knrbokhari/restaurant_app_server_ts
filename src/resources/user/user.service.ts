@@ -50,7 +50,9 @@ class UserService {
         // email: string
     ): Promise<any | Error> {
         try {
-            await verifyToken(token);
+            const user: any = await verifyToken(token);
+
+            await this.user.findByIdAndUpdate(user.id, {verification: true});
             
             return ;
         } catch (err) {
