@@ -29,7 +29,7 @@ class UserService {
 
             const accessToken = token.createToken(user);
 
-            const verificationURL = `${protocol}://${host}/verify/${accessToken}`;
+            const verificationURL = `${protocol}://${host}/api/v1/users/verify/${accessToken}`;
             const message = `Please click the link below to complete your signup process on POS System: \n\n ${verificationURL} `;
 
             await sendEmail({
@@ -50,24 +50,11 @@ class UserService {
         // email: string
     ): Promise<any | Error> {
         try {
-            const vToken = await verifyToken(token);
+            const user: any = await verifyToken(token);
 
-            // const user = await this.user.findOne({email});
-
-            // // if (await user.isValidPassword(password)) {
-            // //     // remove password from user Object
-            //     const userObject = user.toObject();
-            //     delete userObject.password;
-
-            //     const accessToken = token.createToken(user);
-
-            //     return { user: userObject, token: accessToken};
-            // // } else {
-            // //     throw new Error('Wrong credentials given');
-            // // }
-            // const user = await this.user.findOneAndUpdate({ email }, { verification: true }, { new: true });
-
-            return vToken
+            await this.user.findByIdAndUpdate(user.id, {verification: true});
+            
+            return ;
         } catch (err) {
             throw new Error('verify Token failed');
         }
