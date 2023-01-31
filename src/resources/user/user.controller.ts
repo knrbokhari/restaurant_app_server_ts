@@ -46,11 +46,9 @@ class UserController implements Controller {
         this.changePassword
         );
         this.router.post(`${this.path}/forgot`, 
-        authenticatedMiddleware, 
         this.forgotPassword
         );
         this.router.post(`${this.path}/reset/:token`, 
-        authenticatedMiddleware, 
         this.resetPassword
         );
     }
