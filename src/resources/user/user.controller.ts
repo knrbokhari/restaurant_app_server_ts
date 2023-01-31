@@ -35,7 +35,7 @@ class UserController implements Controller {
         this.verifyUser
         );
         this.router.post(`${this.path}/send-verify-token`, 
-        // this.SendVerifyToken
+        this.SendVerifyToken
         );
         this.router.put(`${this.path}/update/:id`, 
         authenticatedMiddleware, 
@@ -115,7 +115,26 @@ class UserController implements Controller {
             next(new HttpException(400, error.message));
         }
     };
- 
+
+    // Sending Verify Email
+    private SendVerifyToken = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { email } = req.body;
+            const protocol = req.protocol;
+            const host: any = req.headers.host;
+
+            await this.UserService.ReSendVerifyToken( email, protocol, host );
+
+            res.status(201).json({ success: true, msg: `Please check your email ${email} to complete signup process in order to use the application` });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+    
     // get all users 
     private getAllUser = async (
         req: Request,
