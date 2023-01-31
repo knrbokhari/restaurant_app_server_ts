@@ -47,7 +47,6 @@ class UserService {
     // Verify user using email
     public async verifyUser(
         token: string,
-        // email: string
     ): Promise<any | Error> {
         try {
             const user: any = await verifyToken(token);
@@ -65,28 +64,24 @@ class UserService {
         email: string,
         password: string
     ): Promise<any | Error> {
-        try {
-            const user = await this.user.findOne({ email });
+        const user = await this.user.findOne({ email });
 
-            if (!user) {
-                throw new Error('Unable to find user with that email address');
-            }
+        if (!user) {
+            throw new Error('Unable to find user with that email address');
+        }
 
-            if (await user.isValidPassword(password)) {
-                // remove password from user Object
-                const userObject = user.toObject();
-                delete userObject.password;
+        if (await user.isValidPassword(password)) {
+            // remove password from user Object
+            const userObject = user.toObject();
+            delete userObject.password;
 
-                const accessToken = token.createToken(user);
+            const accessToken = token.createToken(user);
 
-                if(!user.verification) throw new Error('Please Verify your account');
+            if(!user.verification) throw new Error('Please Verify your account');
 
-                return { user: userObject, token: accessToken};
-            } else {
-                throw new Error('Wrong credentials given');
-            }
-        } catch (err) {
-            throw new Error('Unable to Login');
+            return { user: userObject, token: accessToken};
+        } else {
+            throw new Error('Wrong credentials given');
         }
     }
 

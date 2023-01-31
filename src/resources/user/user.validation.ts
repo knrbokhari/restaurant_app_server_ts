@@ -12,7 +12,7 @@ const register = Joi.object({
 });
 
 const login = Joi.object({
-    email: Joi.string().required(),
+    email: Joi.string().email().required(),
 
     password: Joi.string().required(),
 });
