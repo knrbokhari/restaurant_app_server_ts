@@ -32,8 +32,10 @@ class UserController implements Controller {
         this.getAllUser
         );
         this.router.get(`${this.path}/verify/:registerToken`, 
-        // authenticatedMiddleware, 
         this.verifyUser
+        );
+        this.router.post(`${this.path}/send-verify-token`, 
+        this.SendVerifyToken
         );
         this.router.put(`${this.path}/update/:id`, 
         authenticatedMiddleware, 
@@ -44,11 +46,9 @@ class UserController implements Controller {
         this.changePassword
         );
         this.router.post(`${this.path}/forgot`, 
-        authenticatedMiddleware, 
         this.forgotPassword
         );
         this.router.post(`${this.path}/reset/:token`, 
-        authenticatedMiddleware, 
         this.resetPassword
         );
     }
@@ -74,7 +74,7 @@ class UserController implements Controller {
                 host
             );
 
-            res.status(201).json({ success: true, data: `Please check your email ${email} to complete signup process in order to use the application` });
+            res.status(201).json({ success: true, msg: `Please check your email ${email} to complete signup process in order to use the application` });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
@@ -114,6 +114,25 @@ class UserController implements Controller {
         }
     };
 
+    // Sending Verify Email
+    private SendVerifyToken = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { email } = req.body;
+            const protocol = req.protocol;
+            const host: any = req.headers.host;
+
+            await this.UserService.ReSendVerifyToken( email, protocol, host );
+
+            res.status(201).json({ success: true, msg: `Please check your email ${email} to complete signup process in order to use the application` });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+    
     // get all users 
     private getAllUser = async (
         req: Request,

@@ -29,7 +29,7 @@ class UserService {
 
             const accessToken = token.createToken(user);
 
-            const verificationURL = `${protocol}://${host}/api/v1/users/verify/${accessToken}`;
+            const verificationURL = `${protocol}://${host}/verify/${accessToken}`;
             const message = `Please click the link below to complete your signup process on POS System: \n\n ${verificationURL} `;
 
             await sendEmail({
@@ -47,7 +47,6 @@ class UserService {
     // Verify user using email
     public async verifyUser(
         token: string,
-        // email: string
     ): Promise<any | Error> {
         try {
             const user: any = await verifyToken(token);
@@ -56,7 +55,37 @@ class UserService {
             
             return ;
         } catch (err) {
-            throw new Error('verify Token failed');
+            throw new Error('Verify Token failed');
+        }
+    }
+
+    // ReSend Verify Token
+    public async ReSendVerifyToken(
+        email: string,
+        protocol: string,
+        host: string,
+    ): Promise<any | Error> {
+        try {
+            const user: any = await this.user.findOne({email})
+
+            if(!user) throw new Error('Email not found Please login.')
+
+            if(user.verification) throw new Error('This account is already verified.');
+
+            const accessToken = token.createToken(user);
+
+            const verificationURL = `${protocol}://${host}/verify/${accessToken}`;
+            const message = `Please click the link below to complete your signup process on POS System: \n\n ${verificationURL} `;
+
+            await sendEmail({
+                email: user.email,
+                subject: 'POS account verification',
+                message,
+            });
+
+            return user.email;
+        } catch (err: any) {
+            throw new Error(err.message);
         }
     }
 
@@ -65,28 +94,24 @@ class UserService {
         email: string,
         password: string
     ): Promise<any | Error> {
-        try {
-            const user = await this.user.findOne({ email });
+        const user = await this.user.findOne({ email });
 
-            if (!user) {
-                throw new Error('Unable to find user with that email address');
-            }
+        if (!user) {
+            throw new Error('Unable to find user with that email address');
+        }
 
-            if (await user.isValidPassword(password)) {
-                // remove password from user Object
-                const userObject = user.toObject();
-                delete userObject.password;
+        if (await user.isValidPassword(password)) {
+            // remove password from user Object
+            const userObject = user.toObject();
+            delete userObject.password;
 
-                const accessToken = token.createToken(user);
+            const accessToken = token.createToken(user);
 
-                if(!user.verification) throw new Error('Please Verify your account');
+            if(!user.verification) throw new Error('Please Verify your account');
 
-                return { user: userObject, token: accessToken};
-            } else {
-                throw new Error('Wrong credentials given');
-            }
-        } catch (err) {
-            throw new Error('Unable to Login');
+            return { user: userObject, token: accessToken};
+        } else {
+            throw new Error('Wrong credentials given');
         }
     }
 
@@ -176,9 +201,7 @@ class UserService {
                 // reset url
                 const resetUrl = `${protocol}://${host}/reset/${token}`;
             
-                const message = `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
-                 Please click on the following link to complete the process: \n\n ${resetUrl} \n\n
-                 If you did not request this, please ignore this email and your password will remain unchanged.`;
+                const message = `You are receiving this because you (or someone else) have requested the reset of the password for your account. Please click on the following link to complete the process: \n ${resetUrl} \n If you did not request this, please ignore this email and your password will remain unchanged.`;
             
                 await sendEmail({
                   email: user.email,
