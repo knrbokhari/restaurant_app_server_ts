@@ -29,7 +29,7 @@ class UserService {
 
             const accessToken = token.createToken(user);
 
-            const verificationURL = `${protocol}://${host}/api/v1/users/verify/${accessToken}`;
+            const verificationURL = `${protocol}://${host}/verify/${accessToken}`;
             const message = `Please click the link below to complete your signup process on POS System: \n\n ${verificationURL} `;
 
             await sendEmail({
@@ -55,7 +55,37 @@ class UserService {
             
             return ;
         } catch (err) {
-            throw new Error('verify Token failed');
+            throw new Error('Verify Token failed');
+        }
+    }
+
+    // ReSend Verify Token
+    public async ReSendVerifyToken(
+        email: string,
+        protocol: string,
+        host: string,
+    ): Promise<any | Error> {
+        try {
+            const user: any = await this.user.findOne({email})
+
+            if(!user) throw new Error('Email not found Please login.')
+
+            if(user.verification) throw new Error('This account is already verified.');
+
+            const accessToken = token.createToken(user);
+
+            const verificationURL = `${protocol}://${host}/verify/${accessToken}`;
+            const message = `Please click the link below to complete your signup process on POS System: \n\n ${verificationURL} `;
+
+            await sendEmail({
+                email: user.email,
+                subject: 'POS account verification',
+                message,
+            });
+
+            return user.email;
+        } catch (err: any) {
+            throw new Error(err.message);
         }
     }
 
