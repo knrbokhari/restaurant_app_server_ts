@@ -209,9 +209,9 @@ class UserController implements Controller {
     ): Promise<Response | void> => {
         try {
             const { token } = req.params;
-            const { newPassword } = req.body;
+            const { password } = req.body;
 
-            await this.UserService.resetPassword( token, newPassword );
+            await this.UserService.resetPassword( token, password );
 
             res.status(200).json({ success: true, msg: 'reset password successfully' });
         } catch (error: any) {

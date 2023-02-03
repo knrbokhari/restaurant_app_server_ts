@@ -201,17 +201,16 @@ class UserService {
                 // reset url
                 const resetUrl = `${protocol}://${host}/reset/${token}`;
             
-                const message = `You are receiving this because you (or someone else) have requested the reset of the password for your account. Please click on the following link to complete the process: \n ${resetUrl} \n If you did not request this, please ignore this email and your password will remain unchanged.`;
+                const message = `You are receiving this because you (or someone else) have requested the reset of the password for your account. Please click on the following link to complete the process: ${resetUrl} \n If you did not request this, please ignore this email and your password will remain unchanged.`;
             
                 await sendEmail({
                   email: user.email,
                   subject: 'Password Reset',
                   message,
                 });
-                
-                return user;
             });
 
+            return user;
         } catch (err) {
             throw new Error('Unable to send email');
         }
