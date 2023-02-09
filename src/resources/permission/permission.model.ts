@@ -9,7 +9,7 @@ const PermissionSchema = new Schema(
         },
         resourceId:{
             type: Schema.Types.ObjectId,
-            ref: 'Resource',
+            ref: 'Resources',
         },
         isAllowed: {
             type: Boolean,
