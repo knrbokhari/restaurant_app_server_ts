@@ -25,6 +25,20 @@ class ReviewService {
         }
     }
     
+    // update a review
+    public async updateReview(
+        id: string,
+        review: string,
+        rating: string,
+    ): Promise<any | Error> {
+        try {
+            let updateReview = await this.review.findByIdAndUpdate( id, { review, rating });
+
+            return updateReview;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
 }
 
 export default ReviewService;
