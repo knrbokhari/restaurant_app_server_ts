@@ -33,7 +33,11 @@ const OrderSchema = new Schema({
             type: String, 
             enum: ['created', 'processing', 'cancelled', 'completed'], 
             default: 'created' 
-        }
+        },
+        reviews: [{
+            type: Schema.Types.ObjectId,
+            ref: "Reviews",
+        }]
     },
     { timestamps: true }
 );
