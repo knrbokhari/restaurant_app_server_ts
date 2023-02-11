@@ -24,6 +24,19 @@ class ReviewService {
             throw new Error(err.message);
         }
     }
+
+    // find a review
+    public async findReview(
+        id: string
+    ): Promise<any | Error> {
+        try {
+            let review = await this.review.findById(id);
+
+            return review;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
     
     // update a review
     public async updateReview(
