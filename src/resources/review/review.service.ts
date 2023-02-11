@@ -39,6 +39,19 @@ class ReviewService {
             throw new Error(err.message);
         }
     }
+
+    // delete a review
+    public async deleteReview(
+        id: string
+    ): Promise<any | Error> {
+        try {
+            let deleteReview = await this.review.findByIdAndDelete(id);
+
+            return deleteReview;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
 }
 
 export default ReviewService;
