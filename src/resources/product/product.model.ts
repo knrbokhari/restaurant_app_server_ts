@@ -36,7 +36,11 @@ const ProductSchema = new Schema(
         image: {
             type: Array,
             default: []
-        }
+        },
+        reviews: [{
+            type: Schema.Types.ObjectId,
+            ref: "Reviews",
+        }]
     },
     { timestamps: true }
 );
