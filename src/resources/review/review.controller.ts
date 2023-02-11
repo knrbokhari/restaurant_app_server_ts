@@ -23,7 +23,7 @@ class ReviewController implements Controller {
         );
         this.router.delete(`${this.path}/:id`, 
         authenticatedMiddleware, 
-        // this.deleteAReview
+        this.deleteReview
         );
     }
 
@@ -35,10 +35,33 @@ class ReviewController implements Controller {
     ): Promise<Response | void> => {
         try {
             const { id } = req.params;
-            const { id } = req.params;
-            const updateReview = await this.ReviewService.updateReview(id, updateReview, rating);
+            const { review, rating } = req.body;
+            const updateReview = await this.ReviewService.updateReview(id, review, rating);
 
-            res.status(200).json(updateReview);
+            res.status(200).json({
+                success: true,
+                updateReview,
+                message: 'Review Update successfully'
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // update Review
+    private deleteReview = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+            await this.ReviewService.deleteReview(id);
+
+            res.status(200).json({
+                success: true,
+                message: 'Review deleted successfully',
+              });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }
