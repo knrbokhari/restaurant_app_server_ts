@@ -154,9 +154,9 @@ class ProductController implements Controller {
             const { id } = req.params;
             const { name, email, review, rating  } = req.body;
 
-            const newReview = await this.ReviewService.createReview(name, email, review, rating);
+            const newReview: any = await this.ReviewService.createReview(name, email, review, rating);
 
-            const product = await this.ProductService.addProductReview(newReview.id);
+            const product = await this.ProductService.addProductReview(id, newReview.id);
 
             res.status(201).json({
                 success: true,
