@@ -37,9 +37,17 @@ class ProductController implements Controller {
         validationMiddleware(validate.updateProduct), 
         this.updateAProduct
         );
+        this.router.delete(`${this.path}/:id`, 
+        authenticatedMiddleware,
+        this.deleteProduct
+        );
         this.router.post(`${this.path}/review/:id`, 
         authenticatedMiddleware, 
         this.newReviewForProduct
+        );
+        this.router.delete(`${this.path}/review/:id`, 
+        authenticatedMiddleware, 
+        this.deleteReviewForProduct
         );
     }
 
@@ -162,6 +170,40 @@ class ProductController implements Controller {
                 success: true,
                 product: product,
                 msg: "Review added successfully",
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // delete Review For Product
+    private deleteReviewForProduct = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+            const { reviewId  } = req.body;
+
+            const review = await this.ReviewService.findReview(reviewId);
+
+            if ( !review ) throw new Error("Review not found");
+
+            const product = await this.ProductService.getProduct(id);
+
+            let reviews = product.reviews;
+            let updateReviews = reviews.filter((i: string) => i !== id);
+
+            product.reviews = updateReviews;
+            product.markModified("reviews");
+            await product.save();
+
+            await this.ReviewService.deleteReview(reviewId);
+
+            res.status(200).json({
+                success: true,
+                msg: "Review deleted successfully",
               });
         } catch (error: any) {
             next(new HttpException(400, error.message));
