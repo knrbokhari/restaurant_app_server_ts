@@ -48,7 +48,7 @@ class ReviewController implements Controller {
         }
     };
 
-    // update Review
+    // delete Review
     private deleteReview = async (
         req: Request,
         res: Response,

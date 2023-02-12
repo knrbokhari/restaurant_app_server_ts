@@ -1,4 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
+import ReviewService from 'resources/review/review.service';
 import Controller from '../../interfaces/controller.interface';
 import authenticatedMiddleware from '../../middleware/authenticated.middleware';
 import validationMiddleware from '../../middleware/validation.middleware';
@@ -11,6 +12,7 @@ class ProductController implements Controller {
     public path = '/products';
     public router = Router();
     private ProductService = new ProductService();
+    private ReviewService = new ReviewService();
 
     constructor() {
         this.initialiseRoutes();
@@ -34,6 +36,10 @@ class ProductController implements Controller {
         authenticatedMiddleware, 
         validationMiddleware(validate.updateProduct), 
         this.updateAProduct
+        );
+        this.router.post(`${this.path}/review/:id`, 
+        authenticatedMiddleware, 
+        this.newReviewForProduct
         );
     }
 
@@ -138,6 +144,29 @@ class ProductController implements Controller {
         }
     };
 
+    // create new Review For Product
+    private newReviewForProduct = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { id } = req.params;
+            const { name, email, review, rating  } = req.body;
+
+            const newReview = await this.ReviewService.createReview(name, email, review, rating);
+
+            const product = await this.ProductService.addProductReview(newReview.id);
+
+            res.status(201).json({
+                success: true,
+                product: product,
+                msg: "Review added successfully",
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
     
 }
 
