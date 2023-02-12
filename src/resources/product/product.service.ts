@@ -88,6 +88,20 @@ class ProductService {
         }
     }
 
+    // add review to product
+    public async addProductReview(
+        id: string,
+        reviewId: string
+    ): Promise<any | Error> {
+        try {
+            let product = await this.product.findByIdAndUpdate(id, { $push: { reviews: reviewId }}, {new: true}).populate('reviews');
+
+            return product;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
     // delete a product
     public async deleteProduct(
         id: string

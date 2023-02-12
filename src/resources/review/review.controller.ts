@@ -21,10 +21,6 @@ class ReviewController implements Controller {
         validationMiddleware(validate.updateReview), 
         this.updateReview
         );
-        this.router.delete(`${this.path}/:id`, 
-        authenticatedMiddleware, 
-        this.deleteReview
-        );
     }
 
     // update Review
@@ -42,25 +38,6 @@ class ReviewController implements Controller {
                 success: true,
                 updateReview,
                 message: 'Review Update successfully'
-              });
-        } catch (error: any) {
-            next(new HttpException(400, error.message));
-        }
-    };
-
-    // update Review
-    private deleteReview = async (
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ): Promise<Response | void> => {
-        try {
-            const { id } = req.params;
-            await this.ReviewService.deleteReview(id);
-
-            res.status(200).json({
-                success: true,
-                message: 'Review deleted successfully',
               });
         } catch (error: any) {
             next(new HttpException(400, error.message));
