@@ -95,7 +95,7 @@ class OrderService {
         reviewId: string
     ): Promise<any | Error> {
         try {
-            let order = await this.order.findByIdAndUpdate(id, { $push: { reviews: reviewId }}, {new: true});
+            let order = await this.order.findByIdAndUpdate(id, { review: reviewId }, {new: true});
 
             return order;
         } catch (err: any) {
