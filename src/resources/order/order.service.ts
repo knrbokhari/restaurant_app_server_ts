@@ -88,6 +88,20 @@ class OrderService {
             throw new Error(err.message);
         }
     }
+
+    // add review to order
+    public async addOrderReview(
+        id: string,
+        reviewId: string
+    ): Promise<any | Error> {
+        try {
+            let order = await this.order.findByIdAndUpdate(id, { $push: { reviews: reviewId }}, {new: true});
+
+            return order;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
 }
 
 export default OrderService;
