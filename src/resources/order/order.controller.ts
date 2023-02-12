@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from "express";
 import Controller from "interfaces/controller.interface";
 import authenticatedMiddleware from "middleware/authenticated.middleware";
 import validationMiddleware from "middleware/validation.middleware";
+import ReviewService from "resources/review/review.service";
 import HttpException from "utils/exceptions/http.exception";
 import OrderService from "./order.service";
 import validate from './order.validation';
@@ -12,6 +13,7 @@ class OrderController implements Controller{
     public path = '/orders'
     public router = Router();
     private OrderService = new OrderService();
+    private ReviewService = new ReviewService();
 
     constructor() {
         this.initialiseRoutes();
@@ -38,6 +40,10 @@ class OrderController implements Controller{
         this.router.put(`${this.path}/:id`, 
         authenticatedMiddleware, 
         this.completedOrder
+        );
+        this.router.put(`${this.path}/review/:id`, 
+        authenticatedMiddleware,
+        this.addOrderReview
         );
     }
 
@@ -106,7 +112,7 @@ class OrderController implements Controller{
         }
     };
 
-    // processing a Order
+    // cancelled a Order
     private cancelledOrder = async (
         req: Request,
         res: Response,
@@ -130,7 +136,7 @@ class OrderController implements Controller{
         }
     };
 
-    // processing a Order
+    // completed a Order
     private completedOrder = async (
         req: Request,
         res: Response,
@@ -154,4 +160,37 @@ class OrderController implements Controller{
             next(new HttpException(400, error.message));
         }
     };
+
+    // add Order Review
+    private addOrderReview = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const {id} = req.params;
+            const { _id } = req.user;
+            const { name, email, review, rating, type  } = req.body;
+
+            const order = await this.OrderService.findAOrder(id);
+
+            if(!order) return res.status(404).json({ success: false, msg: "Order not found." });
+
+            if(order.clientId !== _id) return res.status(404).json({ success: false, msg: "Your not valid user for this review." });
+
+            const newReview: any = await this.ReviewService.createReview(name, email, review, rating, type);
+
+            await this.OrderService.addOrderReview(id, newReview.id)
+
+            res.status(200).json({
+                success: true,
+                msg: "Review added successfully"
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
 }
+
+export default OrderController;

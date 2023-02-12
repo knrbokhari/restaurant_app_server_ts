@@ -21,6 +21,9 @@ class ReviewController implements Controller {
         validationMiddleware(validate.updateReview), 
         this.updateReview
         );
+        this.router.get(`${this.path}/`, 
+        this.getAllReviews
+        );
     }
 
     // update Review
@@ -39,6 +42,24 @@ class ReviewController implements Controller {
                 updateReview,
                 message: 'Review Update successfully'
               });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
+
+    // update Review
+    private getAllReviews = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const reviews = await this.ReviewService.findOrderReviews()
+
+            res.status(200).json({
+                success: true,
+                reviews,
+                message: 'Successfully'              });
         } catch (error: any) {
             next(new HttpException(400, error.message));
         }

@@ -10,13 +10,15 @@ class ReviewService {
         email: string,
         review: string,
         rating: string,
+        type: string
     ): Promise<any | Error> {
         try {
             let newReview = await this.review.create({
                 name,
                 email,
                 review,
-                rating
+                rating,
+                type
                 });
 
             return newReview;
@@ -33,6 +35,17 @@ class ReviewService {
             let review = await this.review.findById(id);
 
             return review;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
+
+    // find Order Reviews
+    public async findOrderReviews(): Promise<any | Error> {
+        try {
+            let reviews = await this.review.find({type: "order"});
+
+            return reviews;
         } catch (err: any) {
             throw new Error(err.message);
         }

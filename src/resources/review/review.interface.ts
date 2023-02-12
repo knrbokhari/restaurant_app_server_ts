@@ -5,4 +5,5 @@ export default interface Review extends Document {
     email: string;
     review: string;
     rating: string;
+    type: string;
 }
