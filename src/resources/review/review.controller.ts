@@ -54,7 +54,7 @@ class ReviewController implements Controller {
         next: NextFunction
     ): Promise<Response | void> => {
         try {
-            const reviews = await new this.ReviewService.review(id, review, rating);
+            const reviews = await this.ReviewService.findOrderReviews()
 
             res.status(200).json({
                 success: true,

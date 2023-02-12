@@ -39,6 +39,17 @@ class ReviewService {
             throw new Error(err.message);
         }
     }
+
+    // find Order Reviews
+    public async findOrderReviews(): Promise<any | Error> {
+        try {
+            let reviews = await this.review.find({type: "order"});
+
+            return reviews;
+        } catch (err: any) {
+            throw new Error(err.message);
+        }
+    }
     
     // update a review
     public async updateReview(
