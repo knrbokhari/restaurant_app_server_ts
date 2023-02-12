@@ -18,6 +18,11 @@ const ReviewSchema = new Schema(
         rating: {
             type: String,
             require: true        
+        },
+        type: {
+            type: String,
+            enum: ['product', 'order'],
+            require: true        
         }
     },
     { timestamps: true }

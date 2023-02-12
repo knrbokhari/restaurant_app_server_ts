@@ -41,6 +41,10 @@ class OrderController implements Controller{
         authenticatedMiddleware, 
         this.completedOrder
         );
+        this.router.put(`${this.path}/review/:id`, 
+        authenticatedMiddleware,
+        this.addOrderReview
+        );
     }
 
     // create a Order

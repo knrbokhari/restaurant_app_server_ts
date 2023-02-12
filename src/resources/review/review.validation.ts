@@ -5,6 +5,7 @@ const createReview = Joi.object({
     email: Joi.string().max(30).required(),
     review: Joi.string().max(255).required(),
     rating: Joi.string().required(),
+    type: Joi.string().required(),
 });
 
 const updateReview = Joi.object({

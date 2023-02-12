@@ -10,13 +10,15 @@ class ReviewService {
         email: string,
         review: string,
         rating: string,
+        type: string
     ): Promise<any | Error> {
         try {
             let newReview = await this.review.create({
                 name,
                 email,
                 review,
-                rating
+                rating,
+                type
                 });
 
             return newReview;

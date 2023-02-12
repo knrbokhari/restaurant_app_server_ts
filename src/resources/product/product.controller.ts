@@ -160,7 +160,7 @@ class ProductController implements Controller {
     ): Promise<Response | void> => {
         try {
             const { id } = req.params;
-            const { name, email, review, rating,   } = req.body;
+            const { name, email, review, rating, type } = req.body;
 
             const newReview: any = await this.ReviewService.createReview(name, email, review, rating, type);
 
