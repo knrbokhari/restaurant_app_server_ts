@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import ReviewService from 'resources/review/review.service';
+import ReviewService from '../review/review.service';
 import Controller from '../../interfaces/controller.interface';
 import authenticatedMiddleware from '../../middleware/authenticated.middleware';
 import validationMiddleware from '../../middleware/validation.middleware';
