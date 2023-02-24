@@ -15,8 +15,7 @@ class UserService {
         email: string,
         password: string,
         role: string,
-        protocol: string,
-        host: string,
+        origin: string,
     ): Promise<any | Error> {
         try {
             const user: any = await this.user.create({
@@ -29,7 +28,7 @@ class UserService {
 
             const accessToken = token.createToken(user);
 
-            const verificationURL = `${protocol}://${host}/verify/${accessToken}`;
+            const verificationURL = `${origin}/verify/${accessToken}`;
             const message = `Please click the link below to complete your signup process on POS System: \n\n ${verificationURL} `;
 
             await sendEmail({
@@ -62,8 +61,7 @@ class UserService {
     // ReSend Verify Token
     public async ReSendVerifyToken(
         email: string,
-        protocol: string,
-        host: string,
+        origin: string,
     ): Promise<any | Error> {
         try {
             const user: any = await this.user.findOne({email})
@@ -74,7 +72,7 @@ class UserService {
 
             const accessToken = token.createToken(user);
 
-            const verificationURL = `${protocol}://${host}/verify/${accessToken}`;
+            const verificationURL = `${origin}/verify/${accessToken}`;
             const message = `Please click the link below to complete your signup process on POS System: \n\n ${verificationURL} `;
 
             await sendEmail({

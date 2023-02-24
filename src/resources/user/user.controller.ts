@@ -61,8 +61,7 @@ class UserController implements Controller {
     ): Promise<Response | void> => {
         try {
             const { first_name, last_name, email, password, role } = req.body;
-            const protocol = req.protocol;
-            const host: any = req.headers.host;
+            const origin: any = req.get('Origin');
 
             const user: any = await this.UserService.register(
                 first_name,
@@ -70,8 +69,7 @@ class UserController implements Controller {
                 email,
                 password,
                 role,
-                protocol,
-                host
+                origin
             );
 
             res.status(201).json({ success: true, msg: `Please check your email ${email} to complete signup process in order to use the application` });
@@ -122,10 +120,9 @@ class UserController implements Controller {
     ): Promise<Response | void> => {
         try {
             const { email } = req.body;
-            const protocol = req.protocol;
-            const host: any = req.headers.host;
+            const origin: any = req.get('Origin')
 
-            await this.UserService.ReSendVerifyToken( email, protocol, host );
+            await this.UserService.ReSendVerifyToken( email, origin );
 
             res.status(201).json({ success: true, msg: `Please check your email ${email} to complete signup process in order to use the application` });
         } catch (error: any) {
