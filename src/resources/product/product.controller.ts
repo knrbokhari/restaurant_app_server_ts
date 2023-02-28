@@ -6,7 +6,14 @@ import validationMiddleware from '../../middleware/validation.middleware';
 import HttpException from '../../utils/exceptions/http.exception';
 import ProductService from './product.service';
 import validate from './product.validation';
+import { v2 as cloudinary } from 'cloudinary';
 
+
+cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.CLOUD_API_KEY,
+    api_secret: process.env.CLOUD_API_SECRET,
+  });
 
 class ProductController implements Controller {
     public path = '/products';
@@ -46,6 +53,10 @@ class ProductController implements Controller {
         this.newReviewForProduct
         );
         this.router.delete(`${this.path}/review/:id`, 
+        authenticatedMiddleware, 
+        this.deleteReviewForProduct
+        );
+        this.router.delete(`${this.path}/images//:public_id`, 
         authenticatedMiddleware, 
         this.deleteReviewForProduct
         );
@@ -209,7 +220,24 @@ class ProductController implements Controller {
             next(new HttpException(400, error.message));
         }
     };
-    
+
+    // delete image form cloudinary
+    private deleteImage = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<Response | void> => {
+        try {
+            const { public_id } = req.params;
+            await cloudinary.uploader.destroy(public_id);
+            res.status(201).json({
+                success: true,
+                msg: "Image deleted from Cloudinary",
+              });
+        } catch (error: any) {
+            next(new HttpException(400, error.message));
+        }
+    };
 }
 
 export default ProductController;
