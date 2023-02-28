@@ -16,12 +16,23 @@ class ProductService {
             throw new Error(err.message);
         }
     }
-    // get all product
-    public async getAllProduct(): Promise<any | Error> {
-        try {
-            let products = await this.product.find();
 
-            return products;
+    // get all product
+    public async getAllProduct(
+        skip: number,
+        limit: number,
+        pageNo: number
+    ): Promise<any | Error> {
+        try {
+            let products = await this.product.find().limit(limit).skip(skip);
+            const count = await this.product.count();
+            return {
+                data: products, 
+                paging: {
+                total: count,
+                page:  pageNo,
+                pages: Math.ceil(count / limit),
+            }};
         } catch (err: any) {
             throw new Error(err.message);
         }

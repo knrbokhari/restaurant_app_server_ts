@@ -56,9 +56,9 @@ class ProductController implements Controller {
         authenticatedMiddleware, 
         this.deleteReviewForProduct
         );
-        this.router.delete(`${this.path}/images//:public_id`, 
-        authenticatedMiddleware, 
-        this.deleteReviewForProduct
+        this.router.delete(`${this.path}/images/:public_id`, 
+        // authenticatedMiddleware,
+        this.deleteImage
         );
     }
 
@@ -87,9 +87,16 @@ class ProductController implements Controller {
         next: NextFunction
     ): Promise<Response | void> => {
         try {
-            const products = await this.ProductService.getAllProduct();
+            const  { pageNo, limit }: any = req.query;
+            const skip = limit * (pageNo - 1)
 
-            if (!products.length) return res.status(200).json({ success: true, msg: "No product created yet" });
+            if(pageNo <= 0) throw new Error("invalid page number, should start with 1")
+
+            const products = await this.ProductService.getAllProduct(skip, limit, pageNo);
+
+            if(products.paging.total < skip) throw new Error("invalid page number, Contact not found");
+
+            if (!products.paging.total) return res.status(200).json({ success: true, msg: "No product created yet" });
 
             res.status(200).json(products);
         } catch (error: any) {
