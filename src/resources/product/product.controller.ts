@@ -56,9 +56,9 @@ class ProductController implements Controller {
         authenticatedMiddleware, 
         this.deleteReviewForProduct
         );
-        this.router.delete(`${this.path}/images//:public_id`, 
-        authenticatedMiddleware, 
-        this.deleteReviewForProduct
+        this.router.delete(`${this.path}/images/:public_id`, 
+        // authenticatedMiddleware,
+        this.deleteImage
         );
     }
 
