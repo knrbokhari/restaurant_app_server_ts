@@ -161,3 +161,5 @@ class OrderController implements Controller{
     };
 
 }
+
+export default OrderController;
