@@ -28,7 +28,7 @@ class UserController implements Controller {
             this.login
         );
         this.router.get(`${this.path}`, 
-        // authenticatedMiddleware, 
+        authenticatedMiddleware, 
         this.getAllUser
         );
         this.router.get(`${this.path}/verify/:registerToken`, 
