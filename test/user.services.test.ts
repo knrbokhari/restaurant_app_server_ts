@@ -1,11 +1,12 @@
-import bcrypt from "bcrypt";
-import crypto from "crypto";
 import mongoose from "mongoose";
 import request from "supertest";
 import App from "../src/app";
+import * as dotenv from 'dotenv';
+dotenv.config()
 import UserController from "../src/resources/user/user.controller";
 // import UserService from "../src/resources/user/user.service";
 jest.mock('../src/middleware/authenticated.middleware')
+jest.mock('../src/resources/user/user.service')
 
 const { MONGO_DB, PORT }: any = process.env;
 
@@ -39,17 +40,27 @@ describe("User endpoints", () => {
     });
   });
 
-//   describe("GET /api/v1/users/", () => {
-//     it("responds with an array of users", async () => {
-//       const response = await request(app.express)
-//         .get("/api/v1/users")
-//         .send(user);
+  describe("POST /api/v1/users/register", () => {
+    it("should create a new user, generate access token, send verification email, and return email", async () => {
+      const response = await request(app.express)
+        .post("/api/v1/users/register")
+        .send(user);
 
-//       expect(response.status).toBe(200);
-//       let users = response.body;
-//       expect(users).toEqual(expect.any(Array));
-//       expect(users.length).toBeGreaterThan(0);
-//       expect(users[0]._id).toEqual(expect.any(String));
-//     });
-//   });
+      expect(response.status).toBe(201);
+      let newUser = response.body;
+      expect(newUser.success).toEqual(true);
+      expect(newUser.msg).toEqual(expect.any(String));
+    });
+
+    it("should throw an error if any error occurs'", async () => {
+      const response = await request(app.express)
+        .post("/api/v1/users/register")
+        // .send(user);
+
+      expect(response.status).toBe(400);
+      let newUser = response.body;
+      console.log(newUser)
+      expect(newUser.errors).toEqual(expect.any(Array));
+    });
+  });
 });
