@@ -63,7 +63,23 @@ class UserService {
     public async login(
         email: string,
         password: string
-    ): Promise<any | Error> {}
+    ): Promise<any | Error> {
+        const user = await this.users.find(user => user.email === email);
+
+        if (!user) {
+            throw new Error('Unable to find user with that email address');
+        }
+
+        if (user.password === password) {
+
+            if(!user.verification) throw new Error('Please Verify your account');
+            const {password, ...rest} = user;
+
+            return { user: rest, token: 'accessToken'};
+        } else {
+            throw new Error('Wrong credentials given');
+        }
+    }
 
     // find all user
     public async getAllUsers(): Promise<any | Error> {
