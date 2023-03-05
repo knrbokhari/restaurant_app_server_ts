@@ -3,14 +3,26 @@ import userModel from "../user.model";
 
 class UserService {
     private user = userModel;
-    private users = [{
+    private users = [
+        {
         _id: '1',
         first_name: "John",
         last_name: "Doe",
         email: "johndoe@example.com",
         password: "password123",
         role: "user",
-      }]
+        verification: true
+      },
+      {
+        _id: '2',
+        first_name: "Joni",
+        last_name: "Doe",
+        email: "jonidoe@example.com",
+        password: "password123",
+        role: "user",
+        verification: false
+      }
+    ]
 
     // Register a new user
     public async register(

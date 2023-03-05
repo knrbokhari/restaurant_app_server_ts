@@ -54,13 +54,72 @@ describe("User endpoints", () => {
 
     it("should throw an error if any error occurs'", async () => {
       const response = await request(app.express)
-        .post("/api/v1/users/register")
-        // .send(user);
+        .post("/api/v1/users/register");
 
       expect(response.status).toBe(400);
       let newUser = response.body;
-      console.log(newUser)
       expect(newUser.errors).toEqual(expect.any(Array));
     });
+  });
+
+  describe("POST /api/v1/users/login", () => {
+    const verifyUser = {
+      email: "johndoe@example.com",
+      password: "password123"
+    }
+    const unVerifyUser = {
+      email: "jonidoe@example.com",
+      password: "password123"
+    }
+    const userNotFound = {
+      email: "joni@example.com",
+      password: "password123"
+    }
+    const incorrectPassword = {
+      email: "johndoe@example.com",
+      password: "passw123"
+    }
+    it("should return user object and token if credentials are correct", async () => {
+      const response = await request(app.express)
+        .post("/api/v1/users/login")
+        .send(verifyUser);
+
+      expect(response.status).toBe(200);
+      let result = response.body;
+      expect(result.user.email).toEqual(verifyUser.email);
+      expect(result.user.verification).toEqual(true);
+      expect(result.token).toEqual(expect.any(String));
+    });
+
+    it("should throw an error if the account is not verified", async () => {
+      const response = await request(app.express)
+        .post("/api/v1/users/login")
+        .send(unVerifyUser);
+
+      expect(response.status).toBe(400);
+      let result = response.body;
+      expect(result.message).toBe('Please Verify your account' );
+    });
+
+    it("should throw an error if user is not found", async () => {
+      const response = await request(app.express)
+        .post("/api/v1/users/login")
+        .send(userNotFound);
+
+      expect(response.status).toBe(400);
+      let result = response.body;
+      expect(result.message).toBe('Unable to find user with that email address' );
+    });
+
+    it("should throw an error if the password is incorrect", async () => {
+      const response = await request(app.express)
+        .post("/api/v1/users/login")
+        .send(incorrectPassword);
+
+      expect(response.status).toBe(400);
+      let result = response.body;
+      expect(result.message).toBe('Wrong credentials given' );
+    });
+
   });
 });
