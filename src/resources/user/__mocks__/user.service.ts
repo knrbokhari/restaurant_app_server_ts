@@ -107,7 +107,9 @@ class UserService {
     public async updateUser(
         id:string,
         data: any
-    ): Promise<any | Error> {}
+    ): Promise<any | Error> {
+        return data;
+    }
 
     // change password
     public async changePassword(
