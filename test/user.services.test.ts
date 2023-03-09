@@ -147,5 +147,16 @@ describe("User endpoints", () => {
       expect(result.success).toEqual(true);
       expect(result.msg).toBe("User updated successfully");
     });
+
+    it("should handle errors", async () => {
+      // send a PUT request to update the user with ID 3
+      const response = await request(app.express)
+        .put("/api/v1/users/update/3")
+        .set("Authorization", "Bearer token")
+        .send(updateUser);
+      expect(response.statusCode).toBe(400);
+      let result = response.body;
+      expect(result.message).toBe("User not found");
+    });
   });
 });

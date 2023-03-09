@@ -108,9 +108,12 @@ class UserService {
         id:string,
         data: any
     ): Promise<any | Error> {
-        let result = this.users.find(user => user._id === id)
-        result = data
-        return result;
+        let user = this.users.find(user => user._id === id)
+        if (!user) {
+            throw new Error('User not found');
+        }
+        user = data
+        return user;
     }
 
     // change password
