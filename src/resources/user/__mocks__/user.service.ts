@@ -108,7 +108,9 @@ class UserService {
         id:string,
         data: any
     ): Promise<any | Error> {
-        return data;
+        let result = this.users.find(user => user._id === id)
+        result = data
+        return result;
     }
 
     // change password

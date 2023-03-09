@@ -123,4 +123,29 @@ describe("User endpoints", () => {
       expect(result.message).toBe("Wrong credentials given");
     });
   });
+
+
+
+  describe("PUT /api/v1/users/update/:id", () => {
+    const updateUser = {
+      first_name: "John",
+      last_name: "Doei",
+      email: "john@doei.com",
+      password: "password",
+      role: "user",
+      verification: true,
+    };
+
+    it("should update a user", async () => {
+      // send a PUT request to update the user with ID 1
+      const response = await request(app.express)
+        .put("/api/v1/users/update/1")
+        .set("Authorization", "Bearer token")
+        .send(updateUser);
+      expect(response.statusCode).toBe(200);
+      let result = response.body;
+      expect(result.success).toEqual(true);
+      expect(result.msg).toBe("User updated successfully");
+    });
+  });
 });
