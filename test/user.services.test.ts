@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import request from "supertest";
 import App from "../src/app";
-import * as dotenv from 'dotenv';
-dotenv.config()
+import * as dotenv from "dotenv";
+dotenv.config();
 import UserController from "../src/resources/user/user.controller";
 // import UserService from "../src/resources/user/user.service";
-jest.mock('../src/middleware/authenticated.middleware')
-jest.mock('../src/resources/user/user.service')
+jest.mock("../src/middleware/authenticated.middleware");
+jest.mock("../src/resources/user/user.service");
 
 const { MONGO_DB, PORT }: any = process.env;
 
@@ -18,7 +18,7 @@ beforeAll(async () => {
 });
 
 describe("User endpoints", () => {
-//   const userService = new UserService();
+  //   const userService = new UserService();
   const user = {
     first_name: "John",
     last_name: "Doe",
@@ -29,8 +29,7 @@ describe("User endpoints", () => {
 
   describe("GET /api/v1/users", () => {
     it("responds with an array of users", async () => {
-      const response = await request(app.express)
-        .get("/api/v1/users");
+      const response = await request(app.express).get("/api/v1/users");
 
       expect(response.status).toBe(200);
       let users = response.body;
@@ -53,8 +52,9 @@ describe("User endpoints", () => {
     });
 
     it("should throw an error if any error occurs'", async () => {
-      const response = await request(app.express)
-        .post("/api/v1/users/register");
+      const response = await request(app.express).post(
+        "/api/v1/users/register"
+      );
 
       expect(response.status).toBe(400);
       let newUser = response.body;
@@ -65,20 +65,20 @@ describe("User endpoints", () => {
   describe("POST /api/v1/users/login", () => {
     const verifyUser = {
       email: "johndoe@example.com",
-      password: "password123"
-    }
+      password: "password123",
+    };
     const unVerifyUser = {
       email: "jonidoe@example.com",
-      password: "password123"
-    }
+      password: "password123",
+    };
     const userNotFound = {
       email: "joni@example.com",
-      password: "password123"
-    }
+      password: "password123",
+    };
     const incorrectPassword = {
       email: "johndoe@example.com",
-      password: "passw123"
-    }
+      password: "passw123",
+    };
     it("should return user object and token if credentials are correct", async () => {
       const response = await request(app.express)
         .post("/api/v1/users/login")
@@ -98,7 +98,7 @@ describe("User endpoints", () => {
 
       expect(response.status).toBe(400);
       let result = response.body;
-      expect(result.message).toBe('Please Verify your account' );
+      expect(result.message).toBe("Please Verify your account");
     });
 
     it("should throw an error if user is not found", async () => {
@@ -108,7 +108,9 @@ describe("User endpoints", () => {
 
       expect(response.status).toBe(400);
       let result = response.body;
-      expect(result.message).toBe('Unable to find user with that email address' );
+      expect(result.message).toBe(
+        "Unable to find user with that email address"
+      );
     });
 
     it("should throw an error if the password is incorrect", async () => {
@@ -118,8 +120,43 @@ describe("User endpoints", () => {
 
       expect(response.status).toBe(400);
       let result = response.body;
-      expect(result.message).toBe('Wrong credentials given' );
+      expect(result.message).toBe("Wrong credentials given");
+    });
+  });
+
+
+
+  describe("PUT /api/v1/users/update/:id", () => {
+    const updateUser = {
+      first_name: "John",
+      last_name: "Doei",
+      email: "john@doei.com",
+      password: "password",
+      role: "user",
+      verification: true,
+    };
+
+    it("should update a user", async () => {
+      // send a PUT request to update the user with ID 1
+      const response = await request(app.express)
+        .put("/api/v1/users/update/1")
+        .set("Authorization", "Bearer token")
+        .send(updateUser);
+      expect(response.statusCode).toBe(200);
+      let result = response.body;
+      expect(result.success).toEqual(true);
+      expect(result.msg).toBe("User updated successfully");
     });
 
+    it("should handle errors", async () => {
+      // send a PUT request to update the user with ID 3
+      const response = await request(app.express)
+        .put("/api/v1/users/update/3")
+        .set("Authorization", "Bearer token")
+        .send(updateUser);
+      expect(response.statusCode).toBe(400);
+      let result = response.body;
+      expect(result.message).toBe("User not found");
+    });
   });
 });

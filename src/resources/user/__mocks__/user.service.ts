@@ -107,7 +107,14 @@ class UserService {
     public async updateUser(
         id:string,
         data: any
-    ): Promise<any | Error> {}
+    ): Promise<any | Error> {
+        let user = this.users.find(user => user._id === id)
+        if (!user) {
+            throw new Error('User not found');
+        }
+        user = data
+        return user;
+    }
 
     // change password
     public async changePassword(
